@@ -1,16 +1,38 @@
 package com.example.dailyselfie;
 
-import android.app.Activity;
+
+import course.labs.contentproviderlab.PlaceViewAdapter;
+import android.app.ListActivity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class DailySelfieActivity extends Activity {
-
+public class DailySelfieActivity extends ListActivity  {
+	private static String TAG = "DS-DailySelfieActivity";
+	private DailySelfieAdapter mCursorAdapter;
+	
+	
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.i(TAG, "entered onCreate");		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_daily_selfie);
+		DailySelfieDbHelper mDbHelper = new DailySelfieDbHelper(this);
+		
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		Cursor c= db.rawQuery("SELECT * FROM " + DailySelfieContract.TABLE_NAME, null); 
+		StartManagingCursor(c);
+		
+		
+		mCursorAdapter = new DailySelfieAdapter(getApplicationContext(),null,0);
+		setListAdapter(mCursorAdapter);
+		
+		
+		Log.i(TAG, "Leaving onCreate");	
 	}
 
 	@Override
@@ -28,6 +50,7 @@ public class DailySelfieActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}
